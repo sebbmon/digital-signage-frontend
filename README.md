@@ -39,16 +39,16 @@ Jest to projekt grupowy w którym jestem odpowiedzialny za front. Backend nie je
 - Grupy - Zarządzanie grupami oraz tworzenie i modyfikacja zdarzeń w interaktywnym kalendarzu (FullCalendar) które mają być realizowane przez przypisane do grupy maliny.
 
 ## Demo / Podgląd aplikacji
-![Dashboard](https://i.imgur.com/Nudpe4y)
+![Dashboard](https://imgur.com/Nudpe4y)
 
-![Biblioteka mediow](https://i.imgur.com/4nMNkdf)
-![Biblioteka mediow podglad](https://i.imgur.com/e26kpZw)
+![Biblioteka mediow](https://imgur.com/4nMNkdf)
+![Biblioteka mediow podglad](https://imgur.com/e26kpZw)
 
-![Playlisty](https://i.imgur.com/tuvHSzx)
-![Edycja playlisty](https://i.imgur.com/IeFmnXH)
+![Playlisty](https://imgur.com/tuvHSzx)
+![Edycja playlisty](https://imgur.com/IeFmnXH)
 
-![Agenci](https://i.imgur.com/QMNGGaE)
-![Dodawanie maliny](https://i.imgur.com/LiXCblj)
+![Agenci](https://imgur.com/QMNGGaE)
+![Dodawanie maliny](https://imgur.com/LiXCblj)
 
-![Grupy](https://i.imgur.com/q5lelEr)
-![Tworzenie grupy](https://i.imgur.com/TS8gzON)
+![Grupy](https://imgur.com/q5lelEr)
+![Tworzenie grupy](https://imgur.com/TS8gzON)
