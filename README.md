@@ -39,6 +39,10 @@ Jest to projekt grupowy w którym jestem odpowiedzialny za front. Backend nie je
 - Grupy - Zarządzanie grupami oraz tworzenie i modyfikacja zdarzeń w interaktywnym kalendarzu (FullCalendar) które mają być realizowane przez przypisane do grupy maliny.
 
 ## Demo / Podgląd aplikacji
+> Wszystkie screeny pochodzą z produkcyjnej aplikacji. Wersja portfolio nie łączy się z backendem ani urządzeniami.
+
+---
+
 Dashboard
 ![Dashboard](https://i.imgur.com/4ftNA33.png)
 
