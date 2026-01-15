@@ -7,6 +7,16 @@ Repozytorium zawiera czysty Angularowy projekt z komponentami, serwisami i inter
 
 Jest to projekt grupowy w którym jestem odpowiedzialny za front. Backend nie jest częścią tego repozytorium. Wszystkie połączenia API zostały wyłączone.
 
+## Po co to wszystko?
+
+Aplikacja Digital Signage umożliwia **zarządzanie i zdalne wyświetlanie treści** na ekranach które są podłączone do urządzeń Raspberry Pi.  
+
+Frontend pozwala userowi w łatwy sposób:  
+- Tworzyć i edytować playlisty  
+- Zarządzać grupami malin  
+- Planować dystrybucje treści w interaktywnym kalendarzu  
+- Dodawać i modyfikować urządzenia końcowe (Raspberry Pi)  
+
 ---
 
 ## Stack
