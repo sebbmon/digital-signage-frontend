@@ -1,0 +1,52 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+:root {
+    --sidebar-width: 250px;
+    --header-height: 60px;
+    --footer-height: 40px;
+    --bg: #f5f7fb;
+    --card-bg: #ffffff;
+    --muted: #6c757d;
+}
+
+html, body {
+    height: 100%;
+    background: var(--bg);
+}
+
+.content-wrapper {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: margin-left 0.3s ease;
+}
+
+main.app-main {
+    flex: 1 1 auto;
+    padding: 1.25rem;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+/* mobilki */
+@media (max-width: 992px) {
+    .content-wrapper {
+        margin-left: 0;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}

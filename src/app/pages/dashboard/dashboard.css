@@ -1,0 +1,47 @@
+.media-page-container {
+  width: 100%;
+  background-color: #f8f9fa;
+  min-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0, 0, 0, 0.08); 
+  border-radius: 8px;
+}
+
+.icon-box {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
+}
+
+.card-hover-effect {
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: default;
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.12) !important;
+}
+
+.hover-scale {
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+  background-color: #f8f9fa;
+}
+
+.progress {
+  border-radius: 10px;
+  background-color: #e9ecef;
+  overflow: hidden;
+}
+
+.progress-bar {
+  border-radius: 10px;
+}

@@ -1,0 +1,290 @@
+<div class="container-fluid media-page-container p-3 p-md-4">
+
+  <div class="row mb-4 align-items-center">
+    <div class="col-12">
+      <h2 class="fw-bold text-dark mb-1">Agenci</h2>
+      <p class="text-muted small mb-0">Zarządzaj zarejestrowanymi urządzeniami wyświetlającymi.</p>
+    </div>
+  </div>
+
+  <div class="d-flex flex-column gap-4">
+
+    <div class="card border-0 strong-shadow rounded-4">
+      <div class="card-body p-3">
+        <h5 class="fw-bold mb-3 text-secondary text-uppercase small">Zarządzanie</h5>
+
+        <div class="row g-2 align-items-center">
+          <div class="col-md-4">
+            <div class="input-group">
+              <span class="input-group-text bg-white border-end-0 rounded-start-3 ps-3 text-muted">
+                <i class="bi bi-search"></i>
+              </span>
+              <input type="text" class="form-control modern-input border-start-0"
+                     placeholder="Wyszukaj urządzenie..." [(ngModel)]="searchTerm" style="padding-left: 0;">
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <select class="form-select modern-input" [(ngModel)]="sortOption">
+              <option value="">Sortuj według...</option>
+              <option value="name">Nazwa</option>
+              <option value="status">Status</option>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <select class="form-select modern-input" [(ngModel)]="selectedGroupFilter">
+              <option value="">Filtruj po grupie...</option>
+              <option *ngFor="let g of groups" [value]="g.id">{{ g.name }}</option>
+              <option value="none">-- Brak grupy --</option>
+            </select>
+          </div>
+
+          <div class="col-md-2 text-end">
+            <button class="btn btn-primary w-100 shadow-sm" (click)="openAddModal()">
+              <i class="bi bi-plus-lg me-1"></i> Zarejestruj
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 strong-shadow rounded-4">
+      <div class="card-header bg-white border-0 pt-4 px-4 pb-0 rounded-4">
+         <h5 class="fw-bold mb-0">Lista agentów <span class="badge bg-light text-dark border ms-2 rounded-pill">{{ filteredAgents().length }}</span></h5>
+      </div>
+
+      <div class="card-body p-4">
+
+        <div class="row g-3">
+
+          <div *ngIf="agents.length === 0" class="col-12 text-center text-muted py-5">
+             <div class="d-flex flex-column align-items-center opacity-50">
+               <i class="bi bi-hdd-network display-4 mb-3"></i>
+               <p>Brak zarejestrowanych urządzeń.</p>
+             </div>
+          </div>
+
+          <div *ngIf="agents.length > 0 && filteredAgents().length === 0" class="col-12 text-center text-muted py-5">
+            <i class="bi bi-search display-6 opacity-50"></i>
+            <div class="mt-3">Nie znaleziono urządzeń pasujących do filtrów.</div>
+          </div>
+
+          <div *ngFor="let agent of filteredAgents()" class="col-12 col-md-6 col-lg-4 col-xl-3">
+            <div class="agent-card h-100 d-flex flex-column">
+
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="d-flex align-items-center gap-2 overflow-hidden">
+                  <div class="agent-icon-placeholder rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                       [ngClass]="agent.isOnline ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
+                    <i class="bi" [ngClass]="agent.isOnline ? 'bi-display' : 'bi-display-fill'"></i>
+                  </div>
+                  <div class="overflow-hidden">
+                    <h6 class="agent-name text-truncate mb-0" [title]="agent.name">{{ agent.name }}</h6>
+                    <small class="text-muted text-truncate d-block">{{ agent.model }}</small>
+                  </div>
+                </div>
+
+                <span class="badge rounded-pill fw-normal border" 
+                      [ngClass]="agent.isOnline ? 'bg-success-subtle text-success border-success-subtle' : 'bg-danger-subtle text-danger border-danger-subtle'">
+                   <i class="bi me-1" [ngClass]="agent.isOnline ? 'bi-circle-fill' : 'bi-slash-circle'"></i>
+                   {{ agent.isOnline ? 'Online' : 'Offline' }}
+                </span>
+              </div>
+
+              <div class="agent-body flex-grow-1 p-3 bg-light rounded-3 mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <span class="text-muted small">IP:</span>
+                  <span class="fw-medium small">{{ agent.ipAddress }}:{{ agent.port }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                  <span class="text-muted small">Grupa:</span>
+                  <span class="fw-medium small text-truncate" style="max-width: 120px;">
+                    {{ getGroupName(agent.groupId) || '-' }}
+                  </span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted small">Widziano:</span>
+                  <span class="fw-medium small">
+                    {{ (agent.lastSeen | date:'dd.MM.yyyy, HH:mm') || 'Brak danych' }}
+                  </span>
+                </div>
+                <div *ngIf="agent.description" class="mt-2 pt-2 border-top border-secondary-subtle small text-muted text-truncate">
+                  {{ agent.description }}
+                </div>
+              </div>
+
+              <div class="agent-actions mt-auto d-flex gap-2">
+                <!-- podglad temp 
+                <button class="btn btn-sm btn-light flex-fill text-secondary border" title="Podgląd">
+                  <i class="bi bi-eye"></i>
+                </button>
+                -->
+                <button class="btn btn-sm btn-light flex-fill text-primary border" (click)="openEditModal(agent)" title="Edytuj">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <!-- conf temp 
+                <button class="btn btn-sm btn-light flex-fill text-dark border" title="Konfiguracja">
+                  <i class="bi bi-gear"></i>
+                </button>
+                -->
+                <button class="btn btn-sm btn-light flex-fill text-danger border" (click)="openDeleteModal(agent.id)" title="Usuń urządzenie">
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal tworzenia agenta -->
+<div class="modal fade show"
+     [ngStyle]="{ display: showAddModal ? 'block' : 'none' }"
+     style="background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);"
+     *ngIf="showAddModal"
+     (click)="closeAddModal()">
+
+  <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold">Dodaj urządzenie</h5>
+        <button type="button" class="btn-close" (click)="closeAddModal()"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <div *ngIf="addError" class="alert alert-danger small mb-3">{{ addError }}</div>
+
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label small text-muted text-uppercase fw-bold">Nazwa urządzenia</label>
+            <input type="text" class="form-control modern-input" [(ngModel)]="newAgent.name" placeholder="Np. Lobby TV">
+          </div>
+          <div class="col-12">
+            <label class="form-label small text-muted text-uppercase fw-bold">Opis</label>
+            <input type="text" class="form-control modern-input" [(ngModel)]="newAgent.description" placeholder="Opcjonalny opis">
+          </div>
+          <div class="col-md-12">
+             <label class="form-label small text-muted text-uppercase fw-bold">Model</label>
+             <input type="text" class="form-control modern-input" [(ngModel)]="newAgent.model" placeholder="Raspberry Pi 3">
+          </div>
+          <div class="col-md-8">
+             <label class="form-label small text-muted text-uppercase fw-bold">Adres IP</label>
+             <input type="text" class="form-control modern-input" [(ngModel)]="newAgent.ipAddress" placeholder="0.0.0.0">
+          </div>
+          <div class="col-md-4">
+             <label class="form-label small text-muted text-uppercase fw-bold">Port</label>
+             <input type="number" class="form-control modern-input" [(ngModel)]="newAgent.port" placeholder="8080">
+          </div>
+          <div class="col-md-4 mx-auto text-center">
+            <label class="form-label small text-muted text-uppercase fw-bold">Kod Weryfikacyjny</label>
+            <input type="text" 
+                    class="form-control modern-input fw-bold text-center letter-spacing-wide" 
+                    [(ngModel)]="newAgent.verificationCode" 
+                    placeholder="XXXX"
+                    maxlength="4">
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer border-top-0 pt-0 pb-4 pe-4">
+        <button class="btn btn-light border" (click)="closeAddModal()">Anuluj</button>
+        <button class="btn btn-primary" [disabled]="isSavingAdd" (click)="saveNewAgent()">Zarejestruj</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade show"
+     [ngStyle]="{ display: showEditModal ? 'block' : 'none' }"
+     style="background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);"
+     *ngIf="showEditModal"
+     (click)="closeEditModal()">
+
+  <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold">Edytuj urządzenie</h5>
+        <button type="button" class="btn-close" (click)="closeEditModal()"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <div *ngIf="editError" class="alert alert-danger small mb-3">{{ editError }}</div>
+
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label small text-muted text-uppercase fw-bold">Nazwa urządzenia</label>
+            <input type="text" class="form-control modern-input" [(ngModel)]="editAgentData.name">
+          </div>
+          <div class="col-12">
+            <label class="form-label small text-muted text-uppercase fw-bold">Opis</label>
+            <input type="text" class="form-control modern-input" [(ngModel)]="editAgentData.description">
+          </div>
+          <div class="col-md-12">
+             <label class="form-label small text-muted text-uppercase fw-bold">Model</label>
+             <input type="text" class="form-control modern-input" [(ngModel)]="editAgentData.model">
+          </div>
+           <div class="col-md-6"></div>
+          <div class="col-md-8">
+             <label class="form-label small text-muted text-uppercase fw-bold">Adres IP</label>
+             <input type="text" class="form-control modern-input" [(ngModel)]="editAgentData.ipAddress">
+          </div>
+          <div class="col-md-4">
+             <label class="form-label small text-muted text-uppercase fw-bold">Port</label>
+             <input type="number" class="form-control modern-input" [(ngModel)]="editAgentData.port">
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer border-top-0 pt-0 pb-4 pe-4">
+        <button class="btn btn-light border" (click)="closeEditModal()">Anuluj</button>
+        <button class="btn btn-primary" [disabled]="isSavingEdit" (click)="saveEditAgent()">Zapisz zmiany</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal usuwania agenta -->
+<div class="modal fade show"
+     *ngIf="showDeleteModal"
+     [ngStyle]="{ display: 'block' }"
+     style="background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);"
+     (click)="closeDeleteModal()">
+
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;" (click)="$event.stopPropagation()">
+    <div class="modal-content border-0 strong-shadow rounded-4 overflow-hidden">
+
+      <div class="modal-body p-4 text-center">
+        <div class="mb-3 mx-auto d-flex align-items-center justify-content-center bg-danger-subtle text-danger rounded-circle"
+             style="width: 60px; height: 60px;">
+          <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+        </div>
+
+        <h5 class="fw-bold mb-2">Usunąć to urządzenie?</h5>
+        <p class="text-muted small mb-4">
+          Tej operacji nie można cofnąć. Urządzenie zostanie wyrejestrowane z systemu i straci połączenie z serwerem.
+        </p>
+
+        <div class="d-grid gap-2">
+          <button class="btn btn-danger py-2 fw-medium shadow-sm"
+                  (click)="confirmDelete()"
+                  [disabled]="isDeleting">
+            <span *ngIf="isDeleting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            {{ isDeleting ? 'Usuwanie...' : 'Tak, usuń urządzenie' }}
+          </button>
+
+          <button class="btn btn-light py-2 text-muted fw-medium"
+                  (click)="closeDeleteModal()"
+                  [disabled]="isDeleting">
+            Anuluj
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

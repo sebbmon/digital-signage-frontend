@@ -1,0 +1,310 @@
+<div class="container-fluid media-page-container p-3 p-md-4">
+  
+  <div class="row mb-4 align-items-center flex-shrink-0">
+    <div class="col-12">
+      <h2 class="fw-bold text-dark mb-1">Harmonogram</h2>
+      <p class="text-muted small mb-0">Zarządzaj grupami urządzeń i planuj wyświetlanie treści.</p>
+    </div>
+  </div>
+
+  <div class="row g-4 flex-grow-1" style="min-height: 0;">
+
+    <div class="col-12 col-lg-4 col-xl-3 h-100">
+      <div class="card border-0 strong-shadow rounded-4 h-100 d-flex flex-column overflow-hidden">
+        
+        <div class="card-header bg-white border-0 pt-4 px-4 pb-2 flex-shrink-0 d-flex justify-content-between align-items-center">
+          <h5 class="fw-bold mb-0 text-secondary text-uppercase small">Twoje grupy</h5>
+          <button class="btn btn-sm btn-primary shadow-sm" (click)="openAddGroupModal()">
+            <i class="bi bi-plus-lg"></i>
+          </button>
+        </div>
+
+        <div class="card-body p-3 scrollable-content custom-scrollbar">
+          
+          <div *ngIf="groups.length === 0" class="text-center text-muted py-5">
+             <div class="d-flex flex-column align-items-center opacity-50">
+               <i class="bi bi-collection display-4 mb-3"></i>
+               <p class="small">Brak grup.</p>
+             </div>
+          </div>
+
+          <div *ngFor="let group of groups" 
+               class="group-card card border-0 mb-2 p-3"
+               [class.active]="activeGroup?.id === group.id"
+               (click)="selectGroup(group)">
+            
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="d-flex align-items-center gap-3 overflow-hidden">
+                <div class="group-icon rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                     [ngClass]="activeGroup?.id === group.id ? 'bg-primary text-white' : 'bg-light text-secondary'">
+                  <i class="bi bi-collection-play-fill fs-5"></i>
+                </div>
+                
+                <div class="overflow-hidden">
+                  <h6 class="mb-0 fw-semibold text-truncate" [title]="group.name">{{ group.name }}</h6>
+                  <div class="text-muted small text-truncate d-flex align-items-center gap-1">
+                    <i class="bi bi-geo-alt-fill" style="font-size: 0.7rem;"></i> 
+                    {{ group.location || 'Brak lokalizacji' }}
+                  </div>
+                </div>
+              </div>
+
+              <span class="badge rounded-pill fw-normal ms-2"
+                    [ngClass]="activeGroup?.id === group.id ? 'bg-primary text-white' : 'bg-light text-dark border'">
+                {{ group.devices?.length || 0 }}
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-8 col-xl-9 h-100">
+      <div class="card border-0 strong-shadow rounded-4 h-100 d-flex flex-column overflow-hidden">
+        
+        <div class="card-header bg-white border-0 pt-4 px-4 pb-2 flex-shrink-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+          
+          <div class="d-flex align-items-center gap-2">
+             <h5 class="fw-bold mb-0">
+               Kalendarz
+             </h5>
+             <span class="text-muted mx-1">•</span>
+             <h5 class="fw-bold mb-0 text-primary text-truncate" style="max-width: 300px;">
+               {{ activeGroup?.name || 'Wybierz grupę' }}
+             </h5>
+          </div>
+
+          <div *ngIf="activeGroup" class="d-flex gap-2">
+            <button class="btn btn-sm btn-light border text-secondary" (click)="openEditGroupModal()">
+              <i class="bi bi-pencil me-1"></i> Edytuj grupę
+            </button>
+            <button class="btn btn-sm btn-light border text-danger" (click)="openDeleteGroupModal()">
+              <i class="bi bi-trash3 me-1"></i> Usuń
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body p-4 h-100 overflow-hidden">
+          <div class="calendar-wrapper h-100">
+             <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal fade show"
+     *ngIf="showAddModal || showEditModal"
+     [ngStyle]="{ display: 'block' }"
+     style="background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);"
+     (click)="closeModal()">
+
+  <div class="modal-dialog modal-dialog-centered modal-lg" (click)="$event.stopPropagation()">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+      
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold">{{ showAddModal ? 'Nowa grupa' : 'Edycja grupy' }}</h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+
+      <div class="modal-body p-4 scrollable-content custom-scrollbar" style="max-height: 70vh;">
+        <div class="row g-4">
+          
+          <div class="col-12 col-md-5">
+            <div class="d-flex flex-column gap-3">
+              <div>
+                <label class="form-label small text-muted text-uppercase fw-bold">Nazwa grupy</label>
+                <input type="text" class="form-control modern-input" placeholder="Np. Nowa grupa"
+                       [(ngModel)]="newGroup.name"
+                       (ngModelChange)="formErrors.name = ''"
+                       [class.border-danger]="formErrors.name">
+                <div *ngIf="formErrors.name" class="text-danger small mt-1">{{ formErrors.name }}</div>
+              </div>
+
+              <div>
+                <label class="form-label small text-muted text-uppercase fw-bold">Lokalizacja</label>
+                <input type="text" class="form-control modern-input" placeholder="Np. UKEN korytarz" [(ngModel)]="newGroup.location">
+              </div>
+
+              <div>
+                <label class="form-label small text-muted text-uppercase fw-bold">Opis</label>
+                <textarea class="form-control modern-input" rows="4" placeholder="Opcjonalny opis" [(ngModel)]="newGroup.description"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-7">
+            <label class="form-label small text-muted text-uppercase fw-bold d-flex justify-content-between align-items-center">
+              Przypisz urządzenia
+              <button class="btn btn-link btn-sm p-0 text-decoration-none" (click)="clearSelectedDevices()">Wyczyść</button>
+            </label>
+            
+            <div class="input-group mb-2">
+              <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+              <input type="text" class="form-control modern-input border-start-0 ps-0" 
+                     placeholder="Szukaj urządzeń..." [(ngModel)]="deviceSearchTerm">
+            </div>
+
+            <div class="media-selection-list custom-scrollbar" 
+                 [class.border-danger]="formErrors.devices"
+                 style="min-height: 300px; max-height: 300px;">
+              
+              <div *ngIf="modalDevicesList().length === 0" class="text-center text-muted py-4 small">
+                Brak pasujących urządzeń.
+              </div>
+
+              <div *ngFor="let d of modalDevicesList()" 
+                   class="media-selection-item"
+                   [class.selected]="isDeviceSelected(d)">
+                
+                <div class="form-check w-100 m-0 d-flex align-items-center gap-2" style="cursor: pointer;">
+                  <input class="form-check-input mt-0" type="checkbox" 
+                         [id]="'dev-'+d.id"
+                         [checked]="isDeviceSelected(d)"
+                         (change)="toggleDeviceSelection(d.id, $any($event.target).checked)">
+                  
+                  <label class="form-check-label flex-grow-1 cursor-pointer" [for]="'dev-'+d.id">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                      <div>
+                        <div class="fw-semibold small">{{ d.name }}</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">{{ d.model }} • {{ d.ipAddress }}</div>
+                      </div>
+                      
+                      <div style="font-size: 0.7rem;">
+                        <span *ngIf="!d.groupId" class="badge bg-success-subtle text-success border border-success-subtle">Dostępny</span>
+                        <span *ngIf="d.groupId && (!showEditModal || (showEditModal && activeGroup?.id !== d.groupId))" 
+                              class="badge bg-danger-subtle text-danger border border-danger-subtle">Zajęty</span>
+                        <span *ngIf="d.groupId && showEditModal && activeGroup?.id === d.groupId" 
+                              class="badge bg-primary-subtle text-primary border border-primary-subtle">W grupie</span>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="formErrors.devices" class="text-danger small mt-1">{{ formErrors.devices }}</div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer border-top-0 pt-0 pb-4 pe-4">
+        <button class="btn btn-light border" (click)="closeModal()">Anuluj</button>
+        <button class="btn btn-primary" (click)="showAddModal ? saveNewGroup() : saveEditedGroup()">
+          {{ showAddModal ? 'Utwórz grupę' : 'Zapisz zmiany' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- popover edycji / tworzenia -->
+<div *ngIf="showEventModal" 
+     #eventPopover
+     class="event-popover"
+     [style.top.px]="popupPosition.top"
+     [style.left.px]="popupPosition.left"
+     (click)="$event.stopPropagation()">
+
+  <div class="popover-header">
+    <div class="d-flex align-items-center gap-2">
+      <div class="bg-primary-subtle text-primary rounded p-1">
+        <i class="bi" [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-calendar-plus'"></i>
+      </div>
+      <h6 class="mb-0 fw-bold text-dark">
+        {{ isEditMode ? 'Edytuj wydarzenie' : 'Nowe wydarzenie' }}
+      </h6>
+    </div>
+    <button class="btn-close small" (click)="closeEventModal()"></button>
+  </div>
+
+  <div class="popover-body">
+    <div class="mb-3">
+      <label class="form-label small text-uppercase fw-bold text-muted" style="font-size: 0.7rem;">Playlista</label>
+      <select [(ngModel)]="eventForm.playlistId" class="form-select modern-input py-1">
+        <option [ngValue]="undefined" disabled selected>Wybierz playlistę...</option>
+        <option *ngFor="let p of availablePlaylists" [value]="p.id">{{ p.name }}</option>
+      </select>
+    </div>
+
+    <div class="row g-2 mb-4">
+      <div class="col-6">
+        <label class="form-label small text-muted mb-1">Start</label>
+        <input type="time" [(ngModel)]="eventForm.startTime" class="form-control modern-input py-1 text-center">
+      </div>
+      <div class="col-6">
+        <label class="form-label small text-muted mb-1">Koniec</label>
+        <input type="time" [(ngModel)]="eventForm.endTime" class="form-control modern-input py-1 text-center">
+      </div>
+    </div>
+
+    <div class="mb-3 px-1" *ngIf="!isEditMode">
+      <div class="form-check form-switch d-flex align-items-center gap-2">
+        <input class="form-check-input" type="checkbox" role="switch" id="customEventSwitch" 
+               [(ngModel)]="eventForm.custom" style="cursor: pointer;">
+        
+        <label class="form-check-label small text-muted cursor-pointer fw-medium" for="customEventSwitch">
+          {{ eventForm.custom ? 'Wydarzenie jednorazowe' : 'Wydarzenie cykliczne' }}
+        </label>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center pt-3 border-top gap-2">
+      <button *ngIf="isEditMode" class="btn btn-sm btn-light text-danger border" (click)="openDeleteEventModal()" title="Usuń">
+        <i class="bi bi-trash3"></i>
+      </button>
+      
+      <div class="ms-auto d-flex gap-2">
+        <button class="btn btn-sm btn-light" (click)="closeEventModal()">Anuluj</button>
+        <button class="btn btn-sm btn-primary px-3" (click)="handleSave()" [disabled]="!eventForm.playlistId">
+           Zapisz
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal usuwania grup i harmonogramow -->
+<div class="modal fade show"
+     *ngIf="showDeleteModal"
+     [ngStyle]="{ display: 'block' }"
+     style="background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1200;"
+     (click)="closeDeleteModal()">
+
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;" (click)="$event.stopPropagation()">
+    <div class="modal-content border-0 strong-shadow rounded-4 overflow-hidden">
+      
+      <div class="modal-body p-4 text-center">
+        <div class="mb-3 mx-auto d-flex align-items-center justify-content-center bg-danger-subtle text-danger rounded-circle" 
+             style="width: 60px; height: 60px;">
+          <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+        </div>
+
+        <h5 class="fw-bold mb-2">{{ deleteModalTitle }}</h5>
+        
+        <p class="text-muted small mb-4">
+          {{ deleteModalMessage }}
+        </p>
+
+        <div class="d-grid gap-2">
+          <button class="btn btn-danger py-2 fw-medium shadow-sm" 
+                  (click)="confirmDelete()" 
+                  [disabled]="isDeleting">
+            <span *ngIf="isDeleting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            {{ isDeleting ? 'Usuwanie...' : 'Tak, usuń' }}
+          </button>
+          
+          <button class="btn btn-light py-2 text-muted fw-medium" 
+                  (click)="closeDeleteModal()"
+                  [disabled]="isDeleting">
+            Anuluj
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

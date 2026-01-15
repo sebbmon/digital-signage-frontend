@@ -1,0 +1,241 @@
+<div class="container-fluid media-page-container p-3 p-md-4">
+  
+  <div class="row mb-4 align-items-center g-3">
+    <div class="col-lg-4 col-md-12">
+      <h2 class="fw-bold text-dark mb-1">Biblioteka Mediów</h2>
+      <p class="text-muted small mb-0">Zarządzaj swoimi plikami wideo i obrazami.</p>
+    </div>
+    
+    <div class="col-lg-8 col-md-12">
+      <div class="upload-card card border-0 shadow-sm">
+        <div class="card-body p-2">
+          <form (ngSubmit)="uploadMedia()">
+            <div class="row g-2 align-items-center">
+              
+              <div class="col-12 col-md">
+                 <input type="text" [(ngModel)]="newMedia.originalName" name="mediaName" 
+                        class="form-control modern-input" placeholder="Nazwa pliku">
+              </div>
+
+              <div class="col-12 col-md-auto position-relative file-upload-wrapper">
+                <input type="file" 
+                      #fileInput 
+                      (change)="onFileSelected($event)" 
+                      class="file-input-hidden" 
+                      accept="image/*,video/*" 
+                      id="fileUpload">
+
+                <label for="fileUpload" 
+                      class="btn btn-light btn-upload w-100 d-flex justify-content-center align-items-center gap-2"
+                      [class.border-success]="fileInput.files?.length" 
+                      [class.text-success]="fileInput.files?.length">
+
+                  <ng-container *ngIf="!fileInput.files?.length">
+                      <i class="bi bi-cloud-arrow-up-fill text-primary"></i>
+                      <span class="text-nowrap">Wybierz plik</span>
+                  </ng-container>
+
+                  <ng-container *ngIf="fileInput.files?.length">
+                      <i class="bi bi-check-circle-fill"></i>
+                      <span class="text-truncate" style="max-width: 150px;">
+                        {{ fileInput.files?.[0]?.name }}
+                      </span>
+                  </ng-container>
+                </label>
+              </div>
+
+              <div class="col-12 col-md-auto">
+                <button type="submit" class="btn btn-primary btn-upload-action w-100" [disabled]="isUploading">
+                  <span *ngIf="!isUploading"><i class="bi bi-send-fill"></i> Wyślij</span>
+                  <div *ngIf="isUploading" class="spinner-border spinner-border-sm" role="status"></div>
+                </button>
+              </div>
+            </div>
+          </form>
+          <div *ngIf="uploadError" class="text-danger small mt-2 ps-1">{{ uploadError }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 strong-shadow rounded-4 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0 modern-table fixed-table">
+        <thead class="bg-light text-secondary text-uppercase small">
+          <tr>
+            <th class="ps-4" style="width: auto;">Plik</th>
+            
+            <th class="d-none d-md-table-cell" style="width: 120px;">Typ</th>
+            <th class="d-none d-md-table-cell" style="width: 100px;">Rozmiar</th>
+            <th style="width: 140px;">Data</th> <th class="text-end pe-4" style="width: 140px;">Akcje</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let media of mediaList" class="media-row">
+            
+            <td class="ps-4" style="max-width: 0;"> <div class="d-flex align-items-center gap-3">
+                <div class="media-icon-placeholder rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                     [ngClass]="media.contentType.startsWith('video') ? 'bg-primary-subtle text-primary' : 'bg-success-subtle text-success'">
+                  <i class="bi" [ngClass]="media.contentType.startsWith('video') ? 'bi-play-circle-fill' : 'bi-image'"></i>
+                </div>
+                
+                <div class="d-flex flex-column text-truncate">
+                  <span class="fw-semibold text-dark text-truncate" [title]="media.originalName">
+                    {{ media.originalName }}
+                  </span>
+                  <span class="text-muted small text-truncate" [title]="media.filename">
+                    {{ media.filename }}
+                  </span>
+                </div>
+              </div>
+            </td>
+
+            <td class="d-none d-md-table-cell">
+              <span class="badge rounded-pill fw-normal" 
+                    [ngClass]="media.contentType.startsWith('video') ? 'bg-primary-subtle text-primary' : 'bg-success-subtle text-success'">
+                {{ media.contentType.startsWith('video') ? 'Wideo' : 'Obraz' }}
+              </span>
+            </td>
+
+            <td class="text-muted small fw-medium d-none d-md-table-cell">{{ formatSize(media.size) }}</td>
+            
+            <td class="text-muted small">
+              <div class="d-flex flex-column">
+                <span>{{ media.uploadedAt | date:'yyyy-MM-dd' }}</span>
+                <span class="text-muted opacity-75" style="font-size: 0.85em">{{ media.uploadedAt | date:'HH:mm' }}</span>
+              </div>
+            </td>
+
+            <td class="text-end pe-4">
+              <div class="btn-group shadow-sm rounded-3" role="group">
+                <button class="btn btn-sm btn-light text-dark" (click)="previewMedia(media)" title="Podgląd">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-light text-success" (click)="downloadMedia(media)" title="Pobierz">
+                  <i class="bi bi-download"></i>
+                </button>
+                <button class="btn btn-sm btn-light text-danger" (click)="openDeleteModal(media.id)" title="Usuń plik">
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="mediaList.length === 0">
+            <td colspan="5" class="text-center py-5">
+               <div class="d-flex flex-column align-items-center text-muted">
+                 <i class="bi bi-folder2-open display-4 mb-3 text-secondary opacity-50"></i>
+                 <p>Tu jest pusto. Dodaj pierwsze media powyżej.</p>
+               </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- pop up podgladu -->
+<div class="modal fade show"
+     *ngIf="showPreview"
+     [ngStyle]="{ display: 'block', background: 'rgba(0,0,0,0.5)' }"
+     (click)="closePreview()">
+
+  <div class="modal-dialog modal-dialog-centered media-shrink-modal"
+       (click)="$event.stopPropagation()">
+
+    <div class="modal-content preview-window">
+      
+      <div class="modal-header d-flex align-items-center gap-2">
+        
+        <div class="flex-shrink-0 d-flex text-secondary">
+           <ng-container *ngIf="selectedMedia?.contentType?.startsWith('video'); else imageIcon">
+             <i class="bi bi-camera-video text-primary fs-5"></i>
+           </ng-container>
+           <ng-template #imageIcon>
+             <i class="bi bi-image text-success fs-5"></i>
+           </ng-template>
+        </div>
+
+        <div class="header-text-constraint d-flex flex-column justify-content-center">
+             <div class="fw-bold text-truncate" [title]="selectedMedia?.filename">
+               {{ selectedMedia?.filename }}
+             </div>
+             <div class="text-muted small text-truncate fw-normal">
+               {{ selectedMedia?.originalName }}
+             </div>
+        </div>
+
+        <button type="button" class="btn-close flex-shrink-0 ms-1" (click)="closePreview()"></button>
+      </div>
+
+      <div class="modal-body p-0 d-flex justify-content-center align-items-center bg-light rounded-2 overflow-hidden">
+
+        <ng-container *ngIf="selectedMedia?.contentType?.startsWith('video')">
+          <div *ngIf="!videoLoaded" class="loader-container">
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+          <video [hidden]="!videoLoaded"
+                 [src]="selectedMediaUrl"
+                 (loadeddata)="videoLoaded = true"
+                 controls autoplay muted
+                 class="media-content">
+          </video>
+        </ng-container>
+
+        <ng-container *ngIf="selectedMedia?.contentType?.startsWith('image')">
+          <div *ngIf="!imageLoaded" class="loader-container">
+             <div class="spinner-border text-primary" role="status"></div>
+          </div>
+          <img [hidden]="!imageLoaded"
+               *ngIf="selectedMediaUrl"
+               [src]="selectedMediaUrl"
+               (load)="imageLoaded = true"
+               alt="Podgląd"
+               class="media-content">
+        </ng-container>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade show"
+     *ngIf="showDeleteModal"
+     [ngStyle]="{ display: 'block' }"
+     style="background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);"
+     (click)="closeDeleteModal()">
+
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;" (click)="$event.stopPropagation()">
+    <div class="modal-content border-0 strong-shadow rounded-4 overflow-hidden">
+      
+      <div class="modal-body p-4 text-center">
+        <div class="mb-3 mx-auto d-flex align-items-center justify-content-center bg-danger-subtle text-danger rounded-circle" 
+             style="width: 60px; height: 60px;">
+          <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+        </div>
+
+        <h5 class="fw-bold mb-2">Usunąć ten plik?</h5>
+        <p class="text-muted small mb-4">
+          Tej operacji nie można cofnąć. Plik zostanie trwale usunięty z biblioteki mediów.
+        </p>
+
+        <div class="d-grid gap-2">
+          <button class="btn btn-danger py-2 fw-medium shadow-sm" 
+                  (click)="confirmDelete()" 
+                  [disabled]="isDeleting">
+            <span *ngIf="isDeleting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            {{ isDeleting ? 'Usuwanie...' : 'Tak, usuń plik' }}
+          </button>
+          
+          <button class="btn btn-light py-2 text-muted fw-medium" 
+                  (click)="closeDeleteModal()"
+                  [disabled]="isDeleting">
+            Anuluj
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

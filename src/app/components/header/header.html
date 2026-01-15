@@ -1,0 +1,44 @@
+<header class="app-header">
+  <div class="container-fluid d-flex align-items-center justify-content-between h-100">
+    
+    <div class="d-flex align-items-center gap-3">
+      <button class="btn btn-light btn-sm border-0 d-lg-none shadow-sm" 
+              type="button" 
+              (click)="toggleSidebar()">
+        <i class="bi bi-list fs-5"></i>
+      </button>
+
+      <div class="d-flex flex-column justify-content-center">
+        <h5 class="mb-0 fw-bold text-dark">{{ pageTitle }}</h5>
+        <div class="d-flex align-items-center gap-2 small text-muted">
+          <i class="bi bi-layers-fill" style="font-size: 0.7rem;"></i>
+          <span style="font-size: 0.8rem; letter-spacing: 0.3px;">SYSTEM PANEL</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-center d-none d-md-flex">
+      <div class="time-widget shadow-sm">
+        <i class="bi bi-clock me-2 text-primary"></i>
+        <span class="time-text">{{ currentDateTime }}</span>
+      </div>
+    </div>
+    
+    <div class="d-flex align-items-center gap-3">
+    
+      <div class="d-flex align-items-center gap-3 pe-3 border-end">
+        <div class="text-end d-none d-sm-block">
+          <div class="fw-bold text-dark" style="font-size: 0.95rem; line-height: 1.2;">{{ userName }}</div>
+          <div class="text-muted small text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">{{ userRole }}</div>
+        </div>
+      </div>
+
+      <button class="btn btn-logout shadow-sm" 
+              (click)="logout()" 
+              title="Wyloguj się">
+        <i class="bi bi-power"></i>
+      </button>
+
+    </div>
+  </div>
+</header>

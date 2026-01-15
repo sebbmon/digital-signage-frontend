@@ -1,0 +1,106 @@
+.media-page-container {
+  width: 100%;
+  background-color: #f8f9fa;
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0, 0, 0, 0.08); 
+  border-radius: 8px;
+}
+
+.modern-input {
+  background-color: #ffffff;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  padding: 10px 15px;
+  font-size: 0.95rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.modern-input:focus {
+  background-color: #ffffff;
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+.modern-input::placeholder {
+  color: #adb5bd;
+}
+
+.input-group .modern-input {
+  border-left: none;
+  box-shadow: none;
+}
+.input-group:focus-within {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+  border-radius: 6px;
+}
+.input-group-text {
+  border-color: #ced4da;
+}
+
+.strong-shadow {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+.scrollable-content {
+  overflow-y: auto;
+  height: 100%;
+  padding-right: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}
+
+.agent-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+  position: relative;
+}
+
+.agent-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.16);
+  border-color: #dee2e6;
+}
+
+.agent-name {
+  font-weight: 600;
+  color: #212529;
+}
+
+.agent-icon-placeholder {
+  width: 40px;
+  height: 40px;
+  font-size: 1.25rem;
+}
+
+.agent-body {
+  font-size: 0.85rem;
+}
+
+.agent-actions .btn {
+  transition: all 0.2s;
+}
+.agent-actions .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.flex-shrink-0 { flex-shrink: 0 !important; }
+.flex-grow-1 { flex-grow: 1 !important; }
+
+.letter-spacing-wide { letter-spacing: 2px; }
