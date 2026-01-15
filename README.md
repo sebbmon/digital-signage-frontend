@@ -26,10 +26,10 @@ Jest to projekt grupowy w którym jestem odpowiedzialny za front. Backend nie je
 
 ## Struktura projektu
 - `src/app/components/` – wszystkie komponenty Angular odpowiedzialne za UI (header, footer, sidebar)
-- `src/app/pages/` – wszystkie strony Angular odpowiedzialne za UI (dashboard, media, playlisty, agenci)
+- `src/app/pages/` – wszystkie strony Angular odpowiedzialne za UI (dashboard, media, playlisty, agenci, grupy)
 - `src/app/services/` – serwisy które zarządzają logiką biznesową i połączeniami z API
 - `src/app/interceptors/` – Http interceptory, np. `AuthInterceptor` i `ApiPrefixInterceptor`
-- `src/environments/` – konfiguracja środowiska (`environment.ts`) do celów portfolio
+- `src/environments/` – konfiguracja środowiska (`environment.ts`)
 
 ## Strony aplikacji
 - Dashboard - Pokazuje ogólne statystyki: liczniki grup, playlist, mediów wrzuconych na serwer oraz ilość urządzeń w systemie
@@ -42,17 +42,25 @@ Jest to projekt grupowy w którym jestem odpowiedzialny za front. Backend nie je
 Dashboard
 ![Dashboard](https://i.imgur.com/4ftNA33.png)
 
+---
+
 Biblioteka mediów i podgląd
 ![Biblioteka mediow](https://i.imgur.com/aqgzv5K.png)
 ![Biblioteka mediow podglad](https://i.imgur.com/HpX1Lqb.png)
+
+---
 
 Playlisty i panel edycji wraz z podglądem
 ![Playlisty](https://i.imgur.com/Ou7hW6Q.png)
 ![Edycja playlisty](https://i.imgur.com/rQSaVCC.png)
 
+---
+
 Agenci i panel dodawania nowej maliny
 ![Agenci](https://i.imgur.com/Mmly0qZ.png)
 ![Dodawanie maliny](https://i.imgur.com/PTpaHZl.png)
+
+---
 
 Kalendarz oraz tworzenie nowej grupy
 ![Grupy](https://i.imgur.com/LmiKdj6.png)
